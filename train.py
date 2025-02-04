@@ -224,14 +224,18 @@ def train(hyp, opt, device, callbacks):
     amp = check_amp(model)  # check AMP
 
     # Freeze
-    freeze = [f"model.{x}." for x in (freeze if len(freeze) > 1 else range(freeze[0]))]  # layers to freeze
+    always_freeze_names = [".Conv1_Sobel"]  # always freeze these layers
+    freeze = [f"model.{x}." for x in (freeze if len(freeze) > 1 else range(freeze[0]))] + always_freeze_names # layers to freeze
     for k, v in model.named_parameters():
         v.requires_grad = True  # train all layers
         # v.register_hook(lambda x: torch.nan_to_num(x))  # NaN to 0 (commented for erratic training results)
         if any(x in k for x in freeze):
             LOGGER.info(f"freezing {k}")
             v.requires_grad = False
-
+    for name, param in model.named_parameters():
+        if not param.requires_grad:
+            print(f"✅ FROZEN: {name}")
+            
     # Image size
     gs = max(int(model.stride.max()), 32)  # grid size (max stride)
     imgsz = check_img_size(opt.imgsz, gs, floor=gs * 2)  # verify imgsz is gs-multiple

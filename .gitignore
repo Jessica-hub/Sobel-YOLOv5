@@ -256,3 +256,16 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# Exclude Entropy, logs, and runs directories
+Entropy/
+logs/
+runs/
+results.py
+
+# Exclude specific YAML files under the data folder
+data/leakdata1.yaml
+data/leakdata2.yaml
+data/leakdata3.yaml
+# Exclude GitHub Actions and Configurations
+.github/
